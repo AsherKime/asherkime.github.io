@@ -30,47 +30,36 @@ L.tileLayer(tileUrl, {
 }).addTo(map);
 
 // --------------------------------------------------------
-// 3. ROCKSTAR TO LEAFLET COORDINATE CONVERSION
+// 3. ROCKSTAR JSON TO LEAFLET COORDINATE CONVERSION
 // --------------------------------------------------------
-// Rockstar game coordinates don't map 1:1 with Leaflet. 
-// This function applies RDOMap's exact math to normalize the grid.
-
+// Use this linear formula for data pulled from RDOMap's JSON files
 function gameToMap(x, y) {
-    const imageBounds = [48841, 38666];
-    const topLeft = [-7168, 4096];
-    const bottomRight = [5120, -5632];
-
-    // Helper to calculate absolute distance
-    const calcDist = (t, i) => t > i ? t - i : i - t;
+    // Note: The game's Y axis maps to Leaflet's Latitude, and X maps to Longitude
+    const lat = (0.01552 * y) - 63.6;
+    const lng = (0.01552 * x) + 111.29;
     
-    // Normalize bounds
-    const eX = calcDist(topLeft[0], bottomRight[0]);
-    const eY = calcDist(topLeft[1], bottomRight[1]);
-    const sX = calcDist(topLeft[0], x);
-    const sY = calcDist(topLeft[1], y);
-
-    // Map to Leaflet's unprojected grid
-    const mappedX = imageBounds[0] * (sX / eX);
-    const mappedY = imageBounds[1] * (sY / eY);
-
-    // Unproject at zoom level 8 (as required by RDOMap's logic)
-    const result = map.unproject([mappedX, mappedY], 8);
-    
-    return [result.lat, result.lng];
+    return [lat, lng];
 }
 
 // --------------------------------------------------------
 // 4. TEST: PLOTTING A MARKER
 // --------------------------------------------------------
-// Example: Let's plot Valentine using exact Rockstar Engine Coordinates
-const valentineGameX = -177.5;
-const valentineGameY = 1475.2;
+// Valentine's exact coordinates from Jean Ropke's JSON
+const valentineX = -177.5;
+const valentineY = 1475.2;
 
-// Convert to Leaflet coordinates
-const valentineCoords = gameToMap(valentineGameX, valentineGameY);
+const valentineCoords = gameToMap(valentineX, valentineY);
 
-// Add the marker
+// Plot the marker!
 L.marker(valentineCoords)
  .addTo(map)
- .bindPopup("<b>Valentine</b><br>X: -177.5, Y: 1475.2")
+ .bindPopup(`<b>Valentine</b><br>Lat: ${valentineCoords[0].toFixed(2)}<br>Lng: ${valentineCoords[1].toFixed(2)}`)
  .openPopup();
+
+// Let's add Saint Denis just to prove the scale is correct across the map
+const saintDenisX = 2517.5;
+const saintDenisY = -1257.6;
+
+L.marker(gameToMap(saintDenisX, saintDenisY))
+ .addTo(map)
+ .bindPopup("<b>Saint Denis</b>");
