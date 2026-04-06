@@ -1,7 +1,4 @@
-// --------------------------------------------------------
 // 1. MAP CONFIGURATION & BOUNDS
-// --------------------------------------------------------
-// The exact bounds used by RDOMap to frame the game world
 const mapBoundary = L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176));
 
 const map = L.map('map', {
@@ -9,16 +6,16 @@ const map = L.map('map', {
     minZoom: 2,
     maxZoom: 7,
     maxBounds: mapBoundary,
-    maxBoundsViscosity: 1.0 // Adds a "bounce back" effect if the user drags too far
+    maxBoundsViscosity: 1.0,
+    
+    // THE FIX: Faster Scroll Zooming. Default is 60. Lower = faster.
+    wheelPxPerZoomLevel: 30, 
+    // zoomDelta: 2 // Uncomment this if you want it to jump 2 zoom levels per click
 });
 
-// Center the map initially
 map.setView([-72, 88], 3);
 
-// --------------------------------------------------------
-// 2. LOAD RDOMAP TILES VIA CDN
-// --------------------------------------------------------
-// We are pointing directly to the webp tiles hosted on their CDN.
+// 2. LOAD TILES
 const tileUrl = 'https://map-tiles.b-cdn.net/assets/rdr3/webp/detailed/{z}/{x}_{y}.webp';
 
 L.tileLayer(tileUrl, {
@@ -26,31 +23,51 @@ L.tileLayer(tileUrl, {
     bounds: mapBoundary,
     minZoom: 2,
     maxZoom: 7,
-    attribution: 'Tiles &copy; <a href="https://rdr2map.com/" target="_blank">RDR2Map</a> | Engine &copy; RDOMap'
+    attribution: 'Tiles &copy; RDR2Map | Engine &copy; RDOMap'
 }).addTo(map);
 
-const storeData = {
-    "color": "black",
-    "key": "general_store",
-    "locations": [
-      {"text": "Armadillo", "x": -104.315, "y": 54.0631},
-      {"text": "Blackwater", "x": -84.1215, "y": 99.1149},
-      {"text": "Rhodes", "x": -83.6887, "y": 131.9255},
-      {"text": "Saint Denis", "x": -84.0779, "y": 155.13},
-      {"text": "Strawberry", "x": -69.6263, "y": 83.5089},
-      {"text": "Tumbleweed", "x": -109.1998, "y": 26.1486},
-      {"text": "Valentine", "x": -51.1262, "y": 106.2615},
-      {"text": "Wallace Station", "x": -57.4932, "y": 91.0859}
-    ]
-};
 
-// 4. PLOT THE MARKERS (No conversion needed!)
-storeData.locations.forEach(store => {
-    // Leaflet expects [Latitude, Longitude]. 
-    // In this JSON, x = Lat, y = Lng.
-    const coords = [store.x, store.y];
+// 3. LAYER GROUPS & DATA
+// We put markers in a LayerGroup so we can clear them instantly when filtering
+let activeMarkersLayer = L.layerGroup().addTo(map);
 
-    L.marker(coords)
-     .addTo(map)
-     .bindPopup(`<b>${store.text}</b>`);
+// Combined Dummy Data based on Jean Ropke's coordinates
+const gameData = [
+    { id: 1, text: "Valentine General Store", x: -51.1262, y: 106.2615, category: "general_store" },
+    { id: 2, text: "Saint Denis General Store", x: -84.0779, y: 155.13, category: "general_store" },
+    { id: 3, text: "Wild Carrots", x: -55.50, y: 110.20, category: "plant" },
+    { id: 4, text: "Indian Tobacco", x: -80.10, y: 120.50, category: "plant" },
+    { id: 5, text: "Jack Hall Gang Map 1", x: -50.00, y: 90.00, category: "treasure" }
+];
+
+
+// 4. FILTERING LOGIC
+function renderMarkers() {
+    // Clear all existing markers off the map
+    activeMarkersLayer.clearLayers();
+
+    // Find out which checkboxes are currently checked
+    const checkedBoxes = document.querySelectorAll('.filter-check:checked');
+    const activeCategories = Array.from(checkedBoxes).map(cb => cb.value);
+
+    // Filter the data and draw the markers
+    gameData.forEach(item => {
+        // If the item's category is in our list of active categories, draw it
+        if (activeCategories.includes(item.category)) {
+            const coords = [item.x, item.y]; // Using pre-processed JSON coords
+            
+            L.marker(coords)
+             .bindPopup(`<b>${item.text}</b><br><i>${item.category}</i>`)
+             .addTo(activeMarkersLayer);
+        }
+    });
+}
+
+// 5. EVENT LISTENERS
+// Listen for clicks on any checkbox and re-render the map
+document.querySelectorAll('.filter-check').forEach(checkbox => {
+    checkbox.addEventListener('change', renderMarkers);
 });
+
+// Run once on load to draw the initial markers
+renderMarkers();
