@@ -29,37 +29,28 @@ L.tileLayer(tileUrl, {
     attribution: 'Tiles &copy; <a href="https://rdr2map.com/" target="_blank">RDR2Map</a> | Engine &copy; RDOMap'
 }).addTo(map);
 
-// --------------------------------------------------------
-// 3. ROCKSTAR JSON TO LEAFLET COORDINATE CONVERSION
-// --------------------------------------------------------
-// Use this linear formula for data pulled from RDOMap's JSON files
-function gameToMap(x, y) {
-    // 0.015625 (1/64) perfectly aligns Rockstar's engine grid with Leaflet's tile grid
-    const lat = (0.015625 * y) - 64;
-    const lng = (0.015625 * x) + 112;
-    
-    return [lat, lng];
-}
+const storeData = {
+    "color": "black",
+    "key": "general_store",
+    "locations": [
+      {"text": "Armadillo", "x": -104.315, "y": 54.0631},
+      {"text": "Blackwater", "x": -84.1215, "y": 99.1149},
+      {"text": "Rhodes", "x": -83.6887, "y": 131.9255},
+      {"text": "Saint Denis", "x": -84.0779, "y": 155.13},
+      {"text": "Strawberry", "x": -69.6263, "y": 83.5089},
+      {"text": "Tumbleweed", "x": -109.1998, "y": 26.1486},
+      {"text": "Valentine", "x": -51.1262, "y": 106.2615},
+      {"text": "Wallace Station", "x": -57.4932, "y": 91.0859}
+    ]
+};
 
-// --------------------------------------------------------
-// 4. TEST: PLOTTING A MARKER
-// --------------------------------------------------------
-// Valentine's exact coordinates from Jean Ropke's JSON
-const valentineX = -177.5;
-const valentineY = 1475.2;
+// 4. PLOT THE MARKERS (No conversion needed!)
+storeData.locations.forEach(store => {
+    // Leaflet expects [Latitude, Longitude]. 
+    // In this JSON, x = Lat, y = Lng.
+    const coords = [store.x, store.y];
 
-const valentineCoords = gameToMap(valentineX, valentineY);
-
-// Plot the marker!
-L.marker(valentineCoords)
- .addTo(map)
- .bindPopup(`<b>Valentine</b><br>Lat: ${valentineCoords[0].toFixed(2)}<br>Lng: ${valentineCoords[1].toFixed(2)}`)
- .openPopup();
-
-// Let's add Saint Denis just to prove the scale is correct across the map
-const saintDenisX = 2517.5;
-const saintDenisY = -1257.6;
-
-L.marker(gameToMap(saintDenisX, saintDenisY))
- .addTo(map)
- .bindPopup("<b>Saint Denis</b>");
+    L.marker(coords)
+     .addTo(map)
+     .bindPopup(`<b>${store.text}</b>`);
+});
