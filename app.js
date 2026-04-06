@@ -30,6 +30,7 @@ const MapEngine = {
             maxBounds: mapBoundary,
             maxBoundsViscosity: 1.0,
             wheelPxPerZoomLevel: 30
+            attributionControl: false
         });
 
         this.map.setView([-72, 88], 3);
