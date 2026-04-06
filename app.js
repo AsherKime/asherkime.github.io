@@ -34,9 +34,9 @@ L.tileLayer(tileUrl, {
 // --------------------------------------------------------
 // Use this linear formula for data pulled from RDOMap's JSON files
 function gameToMap(x, y) {
-    // Note: The game's Y axis maps to Leaflet's Latitude, and X maps to Longitude
-    const lat = (0.01552 * y) - 63.6;
-    const lng = (0.01552 * x) + 111.29;
+    // 0.015625 (1/64) perfectly aligns Rockstar's engine grid with Leaflet's tile grid
+    const lat = (0.015625 * y) - 64;
+    const lng = (0.015625 * x) + 112;
     
     return [lat, lng];
 }
