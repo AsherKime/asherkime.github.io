@@ -29,7 +29,7 @@ const MapEngine = {
             maxZoom: 7,
             maxBounds: mapBoundary,
             maxBoundsViscosity: 1.0,
-            wheelPxPerZoomLevel: 30
+            wheelPxPerZoomLevel: 30,
             attributionControl: false
         });
 
