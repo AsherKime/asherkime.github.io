@@ -3,24 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom RDR2 Map Engine</title>
+    <title>RDR2 Completionist Map</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background-color: #d2b790; /* Matches the map's default background */
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div id="sidebar">
+        <h2>RDR2 Map</h2>
+        
+        <div class="filter-section">
+            <h3>Categories</h3>
+            <label>
+                <input type="checkbox" class="filter-check" value="general_store" checked> 
+                General Stores
+            </label><br>
+            <label>
+                <input type="checkbox" class="filter-check" value="plant" checked> 
+                Plants & Herbs
+            </label><br>
+            <label>
+                <input type="checkbox" class="filter-check" value="treasure" checked> 
+                Treasures
+            </label>
+        </div>
+    </div>
 
     <div id="map"></div>
 
