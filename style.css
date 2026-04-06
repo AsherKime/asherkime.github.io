@@ -1,41 +1,36 @@
 body, html {
     margin: 0;
     padding: 0;
-    height: 100%;
-    display: flex; /* Flexbox for sidebar + map */
-    font-family: 'Georgia', serif;
+    height: 100vh; /* Viewport height guarantees it takes the full screen */
     background-color: #111;
     color: #eee;
+    font-family: 'Georgia', serif;
+}
+
+/* If you add a <header> later, change this to:
+  grid-template-rows: 60px 1fr; 
+*/
+body {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: 1fr; 
 }
 
 #sidebar {
-    width: 280px;
     background-color: #1a1a1a;
     border-right: 2px solid #b71c1c;
     padding: 20px;
-    box-sizing: border-box;
-    z-index: 1000; /* Keeps it above map shadows */
-}
-
-#sidebar h2 {
-    color: #b71c1c;
-    border-bottom: 1px solid #333;
-    padding-bottom: 10px;
-}
-
-.filter-section label {
-    display: block;
-    margin: 10px 0;
-    cursor: pointer;
-    font-size: 1.1em;
+    overflow-y: auto; /* Allows scrolling if filters get too long */
+    z-index: 1000;
 }
 
 #map {
-    flex-grow: 1;
+    width: 100%;
     height: 100%;
+    position: relative; /* Essential for Leaflet */
 }
 
-/* THE FIX: Override Leaflet's default gray background */
+/* Force Leaflet's background color so it's never a black void */
 .leaflet-container {
     background-color: #d2b790 !important; 
 }
