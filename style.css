@@ -1,0 +1,41 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex; /* Flexbox for sidebar + map */
+    font-family: 'Georgia', serif;
+    background-color: #111;
+    color: #eee;
+}
+
+#sidebar {
+    width: 280px;
+    background-color: #1a1a1a;
+    border-right: 2px solid #b71c1c;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 1000; /* Keeps it above map shadows */
+}
+
+#sidebar h2 {
+    color: #b71c1c;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.filter-section label {
+    display: block;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 1.1em;
+}
+
+#map {
+    flex-grow: 1;
+    height: 100%;
+}
+
+/* THE FIX: Override Leaflet's default gray background */
+.leaflet-container {
+    background-color: #d2b790 !important; 
+}
